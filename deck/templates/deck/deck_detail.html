@@ -1,0 +1,86 @@
+{% extends 'deck/base.html' %}
+
+{% block content %}
+    <input id="is_authenticated" type="hidden" value="{{ user.is_authenticated }}">
+    <div class="deck-author">
+        作成者：{{ deck.author}}
+    </div>
+    <div class="deck-created-date">
+        作成日：{{ deck.created_date }}
+    </div>
+    <div>
+        <div class="like-button d-inline" name="{{deck.id}}">
+            {% if like_flag == 0 %}
+                <img class="like d-inline" src="/media/images/like_before.webp" style="width: 5vw;">
+            {% else %}
+                <img class="like d-inline" src="/media/images/like_after.webp" style="width: 5vw;">
+            {% endif %}
+        </div>
+        <p id="like_num" class="d-inline" name="like_num">{{ like_num }}</p>
+        <div id="login_massage" class="d-inline" style="color: red;">
+        </div>
+    </div>
+
+
+    <!-- デッキテーブル -->
+    <div id="deck_image_table" class="row border border-dark rounded mb-1 justify-content-center">
+            <label class="d-inline-block" sytle="margin: 0px;">
+                <!-- アクション -->
+                {% for action in action_list %}
+                    <img src="/media/{{action.action.picture}}" style="width: 14vw;">
+                    {% if action.action_num == 2 %}
+                        <img src="/media/{{action.action.picture}}" style="width: 14vw;">
+                    {% endif %}
+                {% endfor %}
+                <!-- キャラ -->
+                {% for card in card_list %}
+                    <img src="/media/{{card.character.picture}}" style="width: 14vw;">
+                    {% if card.character_num == 2 %}
+                        <img src="/media/{{card.character.picture}}" style="width: 14vw;">
+                    {% endif %}
+                {% endfor %}
+            </label>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function(event){
+        $(document).on('click', '.like-button', function(event){
+            event.preventDefault();
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'like' %}",
+                data: {
+                    'deck_id': $(this).attr('name'),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                dataType: 'json',
+                success: function(response){
+                    if(response.is_authenticated == true){
+                        selector = document.getElementsByName(response.deck_id);
+                        if(response.liked){
+                            console.log("いいねしました");
+                            $(selector).html("<img class='like d-inline' src='/media/images/like_after.webp' style='width: 5vw;'>");
+                        }
+                        else {
+                            console.log("いいねを解除しました。");
+                            $(selector).html("<img class='like d-inline' src='/media/images/like_before.webp' style='width: 5vw;'>");
+                        }
+                        selector2 = document.getElementsByName('like_num');
+                        $(selector2).text(response.count);
+                    }
+                    else if(response.is_authenticated == false){
+                        console.log("ログインしてください");
+                        selector = document.getElementById('login_massage');
+                        $(selector).text(" *いいねするにはログインが必要です");
+                    }
+                },
+                fail: function(){
+                    console.log("失敗しました。")
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

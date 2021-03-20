@@ -1,0 +1,7 @@
+certbot
+manage.py
+requirement.txt
+db_chenge.json
+media/
+venv/
+config.sock

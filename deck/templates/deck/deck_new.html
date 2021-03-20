@@ -1,0 +1,662 @@
+{% extends 'deck/base.html' %}
+{% load static %}
+
+{% block link_bar %}
+<div class="current col-4 border p-1 align-items-center text-center">
+    <a class="nav-link" href="{% url 'deck_new' %}">デッキ作成</a>
+</div>
+<div class="col-4 border p-1 align-items-center text-center">
+    <a class="nav-link" href="{% url 'mypage' %}">マイページ</a>
+</div>
+<div class="col-4 border p-1 align-items-center text-center">
+    <a class="nav-link" href="{% url 'deck_list' %}">投稿デッキ</a>
+</div>
+{% endblock %}
+
+{% block content %}
+{{ image_url_list|json_script:"image_url_list" }}
+{{ id_url_list|json_script:"id_url_list" }}
+{{ action_info|json_script:"action_info" }}
+{{ characters|json_script:"characters" }}
+{{ actions|json_script:"actions" }}
+<div id="app">
+    <!-- <div id="mypage_header" class="col-12 mt-3 pl-1">
+        <div class="text col-12 p-0 text-left">
+            <a href="{% url 'deck_list' %}">ホーム</a>
+            ＞
+            <a href="{% url 'deck_new' %}">デッキ作成</a>
+        </div>
+    </div> -->
+    <!-- モーダルボタン -->
+    <div class="col-12  mx-auto">
+        <div id="" class="col-12 mt-3 p-0">
+            <div class="col-12 p-0">
+                <div class='btn-toolbar border justify-content-center' role="toolbar">
+                    <button type="button" id="serch-button" class="col-12 btn btn-light btn-lg" data-toggle="collapse" data-target="#modal1" aria-expanded="false" aria-controls="modal1">
+                        絞り込み
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="modal-button" class="col-12p-0">
+            <div class="col-12 p-0">
+                <div class='btn-toolbar justify-content-center' role="toolbar">
+                    <div id="button-group" class="col-12 btn-group border p-0" role="group">
+                        <!-- <button type="button" id="serch-button" class="col-4 btn btn-light border" data-toggle="collapse" data-target="#modal1" aria-expanded="false" aria-controls="modal1">絞り込み</button> -->
+                        <button type="button" id="order" class="col-6 btn btn-light btn-lg text-center" :value="order_by" v-on:click="OrderByClick"></button>
+                        <button type="button" id="asc-desc" class="col-6 btn btn-light btn-lg border-left" :value="order_key" v-on:click="AscDescClick"></button>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    
+    <!-- 検索フォーム -->
+    <div class="row">
+        <div id="modal1" class="collapse">
+            <div class="card card-body border-light px-4 pb-0">
+                <div class="px-0 clearfix">
+                    <!-- フォーム -->
+                    <form id="serch-form" class="col-12 px-0" name="serch-form" method="POST">
+                        {% csrf_token %}
+                        <!-- レアリティ：ラベル & ボタン -->
+                        <div id="rarity" class="row pt-1 pb-3">
+                            <div class="col-12 mb-2">【レアリティ】</div>
+                            <div class="col-12">
+                                <!-- SS -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="SS" name="rarity" value="4">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="SS">SS</label>
+                                </div>
+                                <!-- S -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="S" name="rarity" value="3">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="S">S</label>
+                                </div>
+                                <!-- A -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="A" name="rarity" value="2">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="A">A</label>
+                                </div>
+                                <!-- B -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="B" name="rarity" value="1">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="B">B</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- グループ：ラベル & ボタン -->
+                        <div id="group" class="row col-12 border-top border-bottom py-3 px-0">
+                            <div class="col-12 my-2">【グループ】</div>
+                            <div class="col-12 pt-1 px-0">
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="zyuken" name="group" value="zyuken">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="zyuken">受験</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="ryodan" name="group" value="ryodan">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="ryodan">旅団</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="mafian" name="group" value="mafian">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="mafian">マフィ</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="gi" name="group" value="gi">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="gi">GI</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="kimera" name="group" value="kimera">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="kimera">キメラ</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="toubatu" name="group" value="toubatu">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="toubatu">討伐</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="free" name="group" value="free">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="free">フリー</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="narrowing" class="row col-12 pt-3 px-0">
+                            <div class="col mx-auto">
+                                <button type="button"  class="btn btn-light btn-sm border-secondary" v-on:click="SerchFormClick">実行</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div id="card-action" class="col-12 mt-3 p-0">
+            <div class="col-12 my-0 p-0">
+                <div class='btn-toolbar justify-content-center' role="toolbar">
+                    <div id="button-group" class="col-12 btn-group p-0 border" role="group">
+                        <button id="character-button" type="button" class="current col-6 btn btn-light btn-lg" v-on:click="CardButtonClick">キャラカード</button>
+                        <button id="action-button" type="button" class="col-6 btn btn-light btn-lg border-left" v-on:click="ActionButtonClick">アクション</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="col-12 p-0 bg-light" style="position: fixed; bottom: 0; z-index: 10;">
+            <!-- 選択中のデッキテーブル -->
+            <div id="card_sumDiv" class="col-12 border py-2 text-center">
+                キャラカード: [[character_sum]]/24 アクション: [[action_sum]]/6
+            </div>
+            <div id="selected_card" class="col-12 mt-0 p-0">
+                <div class="col-12 my-0 p-0">
+                    <div class='btn-toolbar justify-content-center border' role="toolbar">
+                        <div id="button-group" class="col-12 btn-group p-0" role="group">
+                            <button id="demo-button" type="button" class="btn btn-light" data-toggle="collapse" data-target="#demo" aria-expanded="false" aria-controls="demo">選択中のカード</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="demo" class="col-12 collapse mt-0 p-0" style="position: fixed; bottom: 85px; z-index: 10;">
+            <!-- デッキ -->
+            <form method="POST" id="card_add_form" class="col-12 border brounded bg-light px-0 mx-auto my-0 align-self-center" @submit="DeckSaveClick">
+                {% csrf_token %}
+                <!-- デッキタイトル入力 -->
+                <div id="titleDiv" class="col-12 m-1 p-0 form-check form-check-inline">
+                    <label class="form-check-label" for="title">デッキ名(必須)</label>
+                    <input id="title" class="col-auto mx-auto form-check-input" type="text" name="title">
+                </div>
+                <!-- 選択中のデッキテーブル -->
+                <!-- <div id="card_sumDiv" class="col-12 border-top py-2 text-center">
+                    キャラカード: [[character_sum]]/24 アクション: [[action_sum]]/6
+                </div> -->
+                <!-- <div id="deck_image_table" class="row border border-dark rounded mx-2 mb-1 justify-content-center" v-on:click="deck_card_image_click"> -->
+                <div id="deck_action_table" class="row border rounded mx-2 mb-1 justify-content-center">
+                    <div class="d-block">
+                        <div class="d-inline-block" v-for="(action, index) in selected_actions" :key="action.ID">
+                            <div v-show="action.show">
+                                <label class="d-block" sytle="margin: 0px;">
+                                    <img id="deck_action_image" :src="action.URL"/>
+                                </label>
+
+                                <div class="col-10 d-block border rounded-pill mx-auto p-0" style="background: linear-gradient(to right, #4c4c4c 0%, #4c4c4c 50%, #adadad 50%, #adadad 100%);">
+                                    <div class="col-4 p-1 d-inline text-center">
+                                        <a class="d-inline" :href="action.detail">
+                                            <img id="info" class="d-inline" src="/media/images/info.webp">
+                                        </a>
+                                    </div>
+                                    <div class="col-4 p-1 d-inline text-center">
+                                        <!-- <p class="d-inline card_num" v-if="card.num != 0">[[ card.num ]]</p> -->
+                                        <p class="d-inline card_num">[[ action.num ]]</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="deck_image_table" class="row border border rounded mx-2 mb-1 justify-content-center">
+                    <div class="d-block">
+                        <div class="d-inline-block" v-for="(card, index) in selected_characters" :key="card.ID">
+                            <div v-show="card.show">
+                                <label class="d-block" sytle="margin: 0px;">
+                                    <img id="deck_card_image" :src="card.URL"/>
+                                </label>
+                                <div class="col-10 d-block border rounded-pill mx-auto p-0" style="background: linear-gradient(to right, #4c4c4c 0%, #4c4c4c 50%, #adadad 50%, #adadad 100%);">
+                                    <div class="col-4 p-1 d-inline text-center">
+                                        <a class="d-inline" :href="card.detail">
+                                            <img id="info" class="d-inline" src="/media/images/info.webp">
+                                        </a>
+                                    </div>
+                                    <div class="col-4 p-1 d-inline text-center">
+                                        <!-- <p class="d-inline card_num" v-if="card.num != 0">[[ card.num ]]</p> -->
+                                        <p class="d-inline card_num">[[ card.num ]]</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 my-2">
+                    <div class="row justify-content-center">
+                        <div class='btn-toolbar border' role="toolbar">
+                            <div class="btn-group" role="group">
+                                <button id="reset" type="button" class="btn btn-light" name="reset" value="reset" v-on:click="ResetClick">リセット</button>
+                                {% if user.is_authenticated %}
+                                <button id="save" type="submit" class="btn btn-light border-left px-4" name="save" value="save">保存</button>
+                                {% else %}
+                                <button id="login" type="button" class="btn btn-light border-left px-4"><a class="nav-link" href="{% url 'account_login' %}">ログイン</a></button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <div id="card_list" class="row mt-0 bg-light" v-show="card_show" v-cloak>
+            <div class="row">
+                <!-- テーブル -->
+                <div class="row">
+                    <div id="card_image_table" class="border m-0 p-1 pt-3 justify-content-center">
+                        <div class="d-inline-block" v-for="(card, index) in characters" :key="index">
+                            <!-- <div class="d-block"> -->
+                                <label class="m-0 pt-2">
+                                    <input type="radio" name="img" :value="card.ID" v-on:click="CardImageClick"><img class="card_image_img"  :src="card.URL"/>
+                                </label>
+                            <!-- </div> -->
+                            <div id="character-info-num-div" class="d-flex col-12 d-block border rounded-pill mx-auto p-0 justify-content-center align-items-center">
+                                <div id="character-info-div" class="col-5 p-1 d-inline text-center">
+                                    <a class="" :href="card.detail" style="vertical-align: middle;">
+                                        <img id="info" class="d-inline mx-auto" src="/media/images/info.webp">
+                                    </a>
+                                </div>
+                                <div class="col-5 p-1 d-inline text-center">
+                                    <!-- <p class="d-inline card_num" v-if="card.num != 0">[[ card.num ]]</p> -->
+                                    <p class="d-inline card_num">[[ card.num ]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div id="action_list" class="row mt-0 bg-light" v-show="action_show" v-cloak>
+            <div class="row">
+                <div class="row">
+                    <div id="action_image_table" class="border rounded m-0 p-1 pt-3 justify-content-center">
+                        <div class="d-inline-block" v-for="(action, index) in actions" :key="index">
+                            <!-- <div class="d-block"> -->
+                                <label class="m-0 pt-2">
+                                    <input type="radio" name="img" :value="action.ID" v-on:click="ActionImageClick"><img class="action_image_img" :src="action.URL"/>
+                                </label>
+                            <!-- </div> -->
+                            <div id="info-num-div" class="d-flex col-12 d-block border rounded-pill mx-auto p-0 justify-content-center align-items-center">
+                                <div id="info-div" class="col-5 p-1 d-inline text-center">
+                                    <a class="" :href="action.detail" style="vertical-align: middle;">
+                                        <img id="info" class="d-inline mx-auto" src="/media/images/info.webp">
+                                    </a>
+                                </div>
+                                <div class="col-5 p-1 d-inline text-center">
+                                    <!-- <p class="d-inline card_num" v-if="card.num != 0">[[ card.num ]]</p> -->
+                                    <p class="d-inline card_num">[[ action.num ]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<!-- <script src="{% static 'js/card_list_table.js' %}"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-cookies@1.7.3/vue-cookies.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        delimiters: ['[[',']]'],
+        data: {
+            // キャラカード関連
+            characters: JSON.parse(document.getElementById('characters').textContent),
+            selected_characters: JSON.parse(document.getElementById('characters').textContent),
+            character_sum: 0,
+
+            // アクション関連
+            actions: JSON.parse(document.getElementById('actions').textContent),
+            selected_actions: JSON.parse(document.getElementById('actions').textContent),
+            action_sum: 0,
+
+            // 絞り込み・並び替え・その他
+            order_by: "cost",
+            order_key: "DESCEND", // 昇順：ASCEND、降順：DESCEND
+            rarity_list: [],
+            group_list: [],
+            card_show: true,
+            action_show: false,
+            click: true,
+        },
+        methods: {
+            // キャラ・アクション切り替え
+            CardButtonClick: function(){
+                this.card_show = true;
+                this.action_show = false;
+                $('#action-button').removeClass('current');
+                $('#character-button').addClass('current');
+            },
+            ActionButtonClick: function(){
+                this.card_show = false;
+                this.action_show = true;
+                $('#character-button').removeClass('current');
+                $('#action-button').addClass('current');
+            },
+            // カードがクリックされた時
+            CardImageClick: function() {
+                event.preventDefault();
+                if (app.click){
+                    app.click = false;
+                    var id = parseInt($('#card_image_table input').filter(':checked').val());
+                    const result = app.characters.find((v) => v.ID == id);
+                    const selected_card = app.selected_characters.find((v) => v.ID == id);
+
+                    if(app.character_sum  == 24) {
+                        console.log(result.num);
+                        if(result.num != 2){
+                            console.log("aaaaaaa");
+                            app.click = true;
+                            return false
+                        }
+                    }
+                    
+                    if(result.num == 2){
+                        result.num = 0;
+                        app.character_sum -= 2;
+                        selected_card.num = 0;
+                        selected_card.show = false;
+                    } else {
+                        result.num += 1;
+                        app.character_sum += 1;
+                        selected_card.num += 1;
+                        selected_card.show = true;
+                    }
+
+                    console.log(app.character_sum)
+
+                    app.click = true;
+                }
+            },
+            // アクションがクリックされた時
+            ActionImageClick: function() {
+                event.preventDefault();
+                if(app.click){
+                    app.click = false;
+                    var id = parseInt($('#action_image_table input').filter(':checked').val());
+                    const result = app.actions.find((v) => v.ID == id);
+                    const selected_card = app.selected_actions.find((v) => v.ID == id);
+
+                    if(app.action_sum  == 6) {
+                        if(result.num != 2){
+                            app.click = true;
+                            return false
+                        }
+                    }
+                    
+                    if(result.num == 2){
+                        result.num = 0;
+                        app.action_sum -= 2;
+                        selected_card.num = 0;
+                        selected_card.show = false;
+                    } else {
+                        result.num += 1;
+                        app.action_sum += 1;
+                        selected_card.num += 1;
+                        selected_card.show = true;
+                    }
+                    app.click = true;
+                }
+            },
+            // リセットボタンがクリックされた時
+            ResetClick: function(){
+                event.preventDefault();
+                if(app.click){
+                    app.characters.forEach((object, index) => {
+                        app.$set(app.characters[index], 'num', 0)
+                    })
+                    app.actions.forEach((object, index) => {
+                        app.$set(app.actions[index], 'num', 0)
+                    })
+                    app.selected_characters.forEach((object, index) => {
+                        app.$set(app.selected_characters[index], 'num', 0)
+                        app.$set(app.selected_characters[index], 'show', false)
+                    })
+                    app.selected_actions.forEach((object, index) => {
+                        app.$set(app.selected_actions[index], 'num', 0)
+                        app.$set(app.selected_actions[index], 'show', false)
+                    })
+                    app.character_sum = 0;
+                    app.action_sum = 0;
+                    app.click = true;
+                }
+            },
+            // 絞り込みボタンが押された時
+            SerchFormClick: function(){
+                if(app.click){
+                    app.click = false;
+                    // レアリティを取得
+                    var rarity_list = [];
+                    for (var i = 0; i < document.forms['serch-form'].elements['rarity'].length; i++) {
+                        // i番目のチェックボックスがチェックされているかを判定
+                        if (document.forms['serch-form'].elements['rarity'][i].checked) {
+                            rarity_list.push(document.forms['serch-form'].elements['rarity'][i].value);
+                        }
+                    }
+                    app.rarity_list = rarity_list;   
+                    // グループを取得
+                    var group_list = [];
+                    for (var i = 0; i < document.forms['serch-form'].elements['group'].length; i++) {
+                        // i番目のチェックボックスがチェックされているかを判定
+                        if (document.forms['serch-form'].elements['group'][i].checked) {
+                            group_list.push(document.forms['serch-form'].elements['group'][i].value);
+                        }
+                    }
+                    app.group_list = group_list;
+
+                    app.Ajax();
+                }
+            },
+            // 並び替えボタンが押された時
+            OrderByClick: function(){
+                if(app.click){
+                    app.click = false;
+                    var order_by= $('#order').val();
+
+                    if (order_by == "cost"){
+                        app.order_by = "rarity";
+                        $('#order').text("レアリティ順");
+                    }
+                    else if (order_by == "rarity"){
+                        app.order_by = "cost";
+                        $('#order').text("コスト順");
+                    }
+                    app.Ajax();
+                }
+            },
+            // 昇順降順ボタンが押された時
+            AscDescClick: function(){
+                if(app.click){
+                    app.click = false;
+                    var value = $('#asc-desc').val();
+                    if(value == "ASCEND"){
+                        app.order_key = "DESCEND"
+                        $('#asc-desc').text("降順");
+                    } else {
+                        app.order_key = "ASCEND"
+                        $('#asc-desc').text("昇順");
+                    }
+                    app.Ajax();
+                }
+            },
+            // ajax処理
+            Ajax: function(){
+                $.ajax({
+                    method: 'POST',
+                    url: "{% url 'narrowing' %}",
+                    data: {
+                        'characters': JSON.stringify(app.characters),
+                        'actions': JSON.stringify(app.actions),
+                        'selected_characters': JSON.stringify(app.selected_characters),
+                        'selected_actions': JSON.stringify(app.selected_actions),
+                        'rarity': JSON.stringify(app.rarity_list),
+                        'group': JSON.stringify(app.group_list),
+                        'order_by': app.order_by,
+                        'order_key': app.order_key,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    dataType: 'json',
+                    success: function(response){
+                        var selected_characters = response.selected_characters;
+                        var new_list = [];
+                        for (var i in selected_characters){
+                            var id = selected_characters[i]['ID'];
+                            for (var j in app.selected_characters){
+                                if (app.selected_characters[j]['ID'] == id){
+                                    new_list.push(app.selected_characters[j])
+                                }
+                            }
+                        }
+                        app.selected_characters = new_list;
+
+                        app.characters = response.characters;
+                        for (var i in app.selected_characters){
+                            var id = app.selected_characters[i]['ID']
+                            for (var j in app.characters){
+                                if (app.characters[j]['ID'] == id){
+                                    app.characters[j]['num'] = app.selected_characters[i]['num']
+                                }
+                            }
+                        }
+
+                        var selected_actions = response.selected_actions;
+                        var new_list = [];
+                        for (var i in selected_actions){
+                            var id = selected_actions[i]['ID'];
+                            for (var j in app.selected_actions){
+                                if (app.selected_actions[j]['ID'] == id){
+                                    new_list.push(app.selected_actions[j])
+                                }
+                            }
+                        }
+                        app.selected_actions = new_list;
+
+                        app.actions = response.actions;
+                        for (var i in app.selected_actions){
+                            var id = app.selected_actions[i]['ID']
+                            for (var j in app.actions){
+                                if (app.actions[j]['ID'] == id){
+                                    app.actions[j]['num'] = app.selected_actions[i]['num']
+                                }
+                            }
+                        }
+
+                        app.click = true;
+                    }
+                })
+            },
+            // // 保存ボタンが押された時
+            DeckSaveClick: function(event){
+                var validate = true;
+                var title = $("#title").val()
+
+                if (title!=""){
+                    console.log(title);
+                    if (app.character_sum < 24 || this.action_sum < 6){
+                        if(document.getElementById("CardSumMessage") != null){
+                            document.getElementById("CardSumMessage").remove();
+                        }
+                        if(document.getElementById("TitleErrorMessage") != null){
+                            document.getElementById("TitleErrorMessage").remove();
+                        }
+                        validate = false;
+                        var card_sumDiv = document.getElementById('card_sumDiv');
+                        card_sumDiv.insertAdjacentHTML('afterend', '<div id="CardSumMessage"><p style="color: red;">デッキ枚数が足りません。</p></div>');
+                    }
+                } else {
+                    if(document.getElementById("TitleErrorMessage") != null){
+                        document.getElementById("TitleErrorMessage").remove();
+                    }
+                    validate = false;
+                    var titleDiv = document.getElementById('titleDiv');
+                    titleDiv.insertAdjacentHTML('afterend', '<div id="TitleErrorMessage"><p style="color: red;">デッキ名を入力してください</p></div>');
+                }
+
+                if(validate == true){
+                    var character_id_list = [];
+                    var character_num_list = [];
+                    for (var i in app.selected_characters){
+                        if (app.selected_characters[i]['show'] == true){
+                            character_id_list.push(app.selected_characters[i]['ID'])
+                            character_num_list.push(app.selected_characters[i]['num']);
+                        }
+                    }
+
+                    var action_id_list = [];
+                    var action_num_list = [];
+                    for (var i in app.selected_actions){
+                        if (app.selected_actions[i]['show'] == true){
+                            action_id_list.push(app.selected_actions[i]['ID']);
+                            action_num_list.push(app.selected_actions[i]['num']);
+                        }
+                    }
+                    // 隠れインプット要素で、IDと枚数を送信
+                    // カードID
+                    var id = document.createElement('input');
+                    id.setAttribute('type', 'hidden');
+                    id.setAttribute('name', 'card_id_list');
+                    id.setAttribute('value', character_id_list);
+                    document.getElementById('card_add_form').appendChild(id);
+                    console.log(id);
+                    // アクションID
+                    var action_id = document.createElement('input');
+                    action_id.setAttribute('type', 'hidden');
+                    action_id.setAttribute('name', 'action_id_list');
+                    action_id.setAttribute('value', action_id_list);
+                    document.getElementById('card_add_form').appendChild(action_id);
+                    console.log(action_id);
+                    // // カード枚数
+                    var num = document.createElement('input');
+                    num.setAttribute('type', 'hidden');
+                    num.setAttribute('name', 'card_num_list');
+                    num.setAttribute('value', character_num_list);
+                    document.getElementById('card_add_form').appendChild(num);
+                    console.log(num);
+                    // アクション枚数
+                    var action_num = document.createElement('input');
+                    action_num.setAttribute('type', 'hidden');
+                    action_num.setAttribute('name', 'action_num_list');
+                    action_num.setAttribute('value', action_num_list);
+                    document.getElementById('card_add_form').appendChild(action_num);
+                    console.log(action_num);
+                    console.log("ほぞんします。");
+                } else {
+                    event.preventDefault()
+                    console.log("検証に失敗しました");
+                }
+            },
+        },
+        mounted() {
+            // 並び替えテキストセット
+            if (this.order_by == "rarity"){
+                $('#order').text("レアリティ順");
+            }
+            else if (this.order_by == "cost"){
+                $('#order').text("コスト順");
+            }
+            // 降順昇順テキストセット
+            if(this.order_key == "DESCEND"){
+                $('#asc-desc').text("降順");
+            } else {
+                $('#asc-desc').text("昇順");
+            }
+
+            // 合計計算し直し
+            var sum = 0;
+            for (i in this.characters){
+                sum += this.characters[i]['num'];
+            }
+            this.character_sum = sum;
+            sum = 0;
+            for (i in this.actions){
+                sum += this.actions[i]['num'];
+            }
+            this.action_sum = sum;
+        }
+    });
+</script>
+{% endblock %}

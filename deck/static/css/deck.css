@@ -1,0 +1,220 @@
+/* ページ全体 */
+html, body {
+    background-color: white !important;
+}
+.container-fluid {
+    padding: 0 !important;
+}
+
+/* カレントページ */
+.current, .current a {
+    /* color: white !important; */
+    background-color: #E2E6EA !important;
+}
+
+/* ヘッダー */
+
+
+/* ナビゲーションバー */
+
+
+[v-cloak]{
+    display: none !important;
+}
+
+
+/* カードリスト */
+#card_list, #action_list {
+    margin-bottom: 50% !important;
+}
+    /* カードリストテーブル */
+        /* カードテーブル関連 */
+        #deck_image_table, #deck_action_table {
+            background-color: #fcfcfc;
+            padding: 8px;
+        }
+            /* カードイメージに対応したラジオボタン非表示 */
+            #card_image_table input, #deck_image_table input, #action_image_table input, #deck_action_table input {
+                display: none;
+            }
+            #card_image_table input:checked + img, #deck_image_table input:checked + img, #action_image_table input:checked + img, #deck_action_table input:checked + img {
+                /* border: 2px solid rgb(3, 3, 255); */
+	            /* background-color: #ffeeee; */
+            }
+            /* カードイメージ */
+            #card_image, #deck_card_image, #deck_action_image, .card_image_img, .action_image_img {
+                width: 16vw;
+                /* width: 100%; */
+                text-align: center;
+            }
+            #deck_image_table label, #deck_action_table label {
+                margin: 0;
+            }
+                
+            #info {
+                width: 4vw;
+            }
+            #card_image_table .d-inline-block, #deck_image_table .d-inline-block, 
+            #action_image_table .d-inline-block, #deck_action_table .d-inline-block {
+                position: relative;
+            }
+            #card_image_table .d-inline-block .card_num, #deck_image_table .d-inline-block .card_num, 
+            #action_image_table .d-inline-block .card_num, #deck_action_table .d-inline-block .card_num {
+                font-size: 4vw;
+                margin: 0;
+                color: white;
+            }
+
+/* 絞り込みフォーム */
+    /* チェックボックス非表示 */
+    #serch-form input {
+        display: none;
+    }
+        /* ラベルボタンの背景色 */
+        #serch-form input + label {
+            background-color: #f8f9fa !important;
+        }
+        #serch-form input:checked + label {
+            background-color: #d7d7d7 !important;
+        }
+
+/* カード詳細 */
+.row {
+    margin: 0px !important;
+    text-align: center !important;
+}
+
+
+/* ボタンの文字 */
+#modal1 button, #modal1 label, #group, #rarity, #card-action button, #modal-button button, #selected_card button, #narrowing button, #serch-button, #reset, #save,
+#card_sumDiv, #titleDiv label, #deck_list_button button, .link_bar, .link_bar a, #login a {
+    color:rgb(98, 98, 98);
+    font-weight: bold;
+}
+
+/* #ryodan:checked + label {
+    background-color: rgba(97, 23, 132, 0.1) !important;
+}
+#ryodan + label {
+    color: rgba(97, 23, 132, 0.5) !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#zyuken:checked + label {
+    background-color: rgba(23, 132, 25, 0.1) !important;
+}
+#zyuken + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#mafian:checked + label {
+    background-color: rgba(132, 132, 23, 0.1) !important;
+}
+#mafian + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#kimera:checked + label {
+    background-color: rgba(132, 23, 39, 0.1) !important;
+}
+#kimera + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#toubatu:checked + label {
+    background-color: rgba(23, 123, 132, 0.1) !important;
+}
+#toubatu + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#gi:checked + label {
+    background-color: rgba(23, 32, 132, 0.1) !important;
+}
+#gi + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+#free:checked + label {
+    background-color: rgba(130, 130, 130, 0.1) !important;
+}
+#free + label {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+} */
+
+/* "絞り込み" と "選択中のカード" のアイコン */
+#serch-button[aria-expanded="true"]:before, #demo-button[aria-expanded="true"]:before {
+    margin-left: .5em;
+    font-size:1.25em;
+    font-family: fontAwesome;
+    content: '\f0d7';
+    margin: 0;
+    padding-right: 2px;
+}
+#serch-button[aria-expanded="false"]:before, #demo-button[aria-expanded="false"]:before {
+    margin-left: .5em;
+    font-size:1.25em;
+    font-family: fontAwesome;
+    content: '\f0d8';
+    margin: 0;
+    padding-right: 2px;
+}
+
+#info-num-div, #character-info-num-div { 
+    background: linear-gradient(to right, #4c4c4c 0%, #4c4c4c 50%, #adadad 50%, #adadad 100%);
+}
+
+
+
+* {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+.d-flex:not(.flex-column)>* {
+    min-width: 0;
+}
+.d-flex.flex-column>* {
+    max-width: 100%;    
+}
+
+.title a {
+    font-size: 6vw;
+    font-weight: bold;
+    color: rgb(60, 60, 60) !important;
+}
+
+.page_link a {
+    color: rgb(121, 120, 120);
+}
+
+
+
+
+/* ログイン画面 */
+#username, #password, #login_button {
+    color:rgb(98, 98, 98);
+    font-weight: bold;
+}
+
+/* ログアウト画面 */
+#logout_div p, #logout_div button {
+    color:rgb(98, 98, 98);
+    font-weight: bold;
+}
+
+/* ユーザ登録画面 */
+#password1, #password2, #signup_button {
+    color:rgb(98, 98, 98);
+    font-weight: bold;
+}
+
+/* マイページ */
+#mypage_header .text, #mypage_header .text a{
+    color:rgb(98, 98, 98);
+    font-weight: bold;
+}
+
+
+/* エラーメッセージ */
+#error_messages {
+    color: rgb(232, 46, 46);
+    font-weight: bold;
+}
+ul.errorlist {
+    padding: 0;
+    list-style: none;
+}

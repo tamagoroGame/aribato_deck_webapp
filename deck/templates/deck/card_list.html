@@ -1,0 +1,296 @@
+{% extends 'deck/base.html' %}
+{% load static %}
+
+{% block content %}
+{{ image_url_list|json_script:"image_url_list" }}
+{{ id_url_list|json_script:"id_url_list" }}
+{{ action_info|json_script:"action_info" }}
+{{ characters|json_script:"characters" }}
+{{ actions|json_script:"actions" }}
+<div id="app">
+    <!-- モーダルボタン -->
+    <div class="col-12  mx-auto">
+        <div id="" class="col-12 mt-3 p-0">
+            <div class="col-12 p-0">
+                <div class='btn-toolbar border justify-content-center' role="toolbar">
+                    <button type="button" id="serch-button" class="col-12 btn btn-light btn-lg" data-toggle="collapse" data-target="#modal1" aria-expanded="false" aria-controls="modal1">
+                        絞り込み
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="modal-button" class="col-12p-0">
+            <div class="col-12 p-0">
+                <div class='btn-toolbar justify-content-center' role="toolbar">
+                    <div id="button-group" class="col-12 btn-group border p-0" role="group">
+                        <!-- <button type="button" id="serch-button" class="col-4 btn btn-light border" data-toggle="collapse" data-target="#modal1" aria-expanded="false" aria-controls="modal1">絞り込み</button> -->
+                        <button type="button" id="order" class="col-6 btn btn-light btn-lg text-center" :value="order_by" v-on:click="OrderByClick"></button>
+                        <button type="button" id="asc-desc" class="col-6 btn btn-light btn-lg border-left" :value="order_key" v-on:click="AscDescClick"></button>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    
+    <!-- 検索フォーム -->
+    <div class="row">
+        <div id="modal1" class="collapse">
+            <div class="card card-body border-light px-4 pb-0">
+                <div class="px-0 clearfix">
+                    <!-- フォーム -->
+                    <form id="serch-form" class="col-12 px-0" name="serch-form" method="POST">
+                        {% csrf_token %}
+                        <!-- レアリティ：ラベル & ボタン -->
+                        <div id="rarity" class="row pt-1 pb-3">
+                            <div class="col-12 mb-2">【レアリティ】</div>
+                            <div class="col-12">
+                                <!-- SS -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="SS" name="rarity" value="4">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="SS">SS</label>
+                                </div>
+                                <!-- S -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="S" name="rarity" value="3">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="S">S</label>
+                                </div>
+                                <!-- A -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="A" name="rarity" value="2">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="A">A</label>
+                                </div>
+                                <!-- B -->
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="B" name="rarity" value="1">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3" for="B">B</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- グループ：ラベル & ボタン -->
+                        <div id="group" class="row col-12 border-top border-bottom py-3 px-0">
+                            <div class="col-12 my-2">【グループ】</div>
+                            <div class="col-12 pt-1 px-0">
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="zyuken" name="group" value="zyuken">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="zyuken">受験</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="ryodan" name="group" value="ryodan">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="ryodan">旅団</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="mafian" name="group" value="mafian">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="mafian">マフィ</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="gi" name="group" value="gi">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="gi">GI</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="kimera" name="group" value="kimera">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="kimera">キメラ</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="toubatu" name="group" value="toubatu">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="toubatu">討伐</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" type="checkbox" id="free" name="group" value="free">
+                                    <label class="form-check-label btn btn-light btn-sm border-secondary my-1 px-3 py-2" for="free">フリー</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="narrowing" class="row col-12 pt-3 px-0">
+                            <div class="col mx-auto">
+                                <button type="button"  class="btn btn-light btn-sm border-secondary" v-on:click="SerchFormClick">実行</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div id="card-action" class="col-12 mt-3 p-0">
+            <div class="col-12 my-0 p-0">
+                <div class='btn-toolbar justify-content-center' role="toolbar">
+                    <div id="button-group" class="col-12 btn-group p-0 border" role="group">
+                        <button type="button" class="col-6 btn btn-light btn-lg" v-on:click="CardButtonClick">キャラカード</button>
+                        <button type="button" class="col-6 btn btn-light btn-lg border-left" v-on:click="ActionButtonClick">アクション</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="card_list" class="row mt-0 bg-light" v-show="card_show" v-cloak>
+        <div class="row">
+            <!-- テーブル -->
+            <div class="row">
+                <div id="card_image_table" class="border m-0 p-1 pt-3 justify-content-center">
+                    <div class="d-inline-block" v-for="(card, index) in characters" :key="index">
+                            <label class="m-0 pt-2">
+                                <input type="radio" name="img" :value="card.ID"><img class="card_image_img"  :src="card.URL"/>
+                            </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="action_list" class="row mt-0 bg-light" v-show="action_show" v-cloak>
+        <div class="row">
+            <div class="row">
+                <div id="action_image_table" class="border rounded m-0 p-1 pt-3 justify-content-center">
+                    <div class="d-inline-block" v-for="(action, index) in actions" :key="index">
+                        <!-- <div class="d-block"> -->
+                            <label class="m-0 pt-2">
+                                <input type="radio" name="img" :value="action.ID">
+                                <a :href="action.detail">
+                                    <img class="action_image_img" :src="action.URL"/>
+                                </a>
+                            </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<!-- <script src="{% static 'js/card_list_table.js' %}"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-cookies@1.7.3/vue-cookies.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        delimiters: ['[[',']]'],
+        data: {
+            // キャラカード関連
+            characters: JSON.parse(document.getElementById('characters').textContent),
+
+            // アクション関連
+            actions: JSON.parse(document.getElementById('actions').textContent),
+
+            // 絞り込み・並び替え・その他
+            order_by: "cost",
+            order_key: "DESCEND", // 昇順：ASCEND、降順：DESCEND
+            rarity_list: [],
+            group_list: [],
+            card_show: true,
+            action_show: false,
+            click: true,
+        },
+        methods: {
+            // キャラ・アクション切り替え
+            CardButtonClick: function(){
+                this.card_show = true;
+                this.action_show = false;
+            },
+            ActionButtonClick: function(){
+                this.card_show = false;
+                this.action_show = true;
+            },
+            // 絞り込みボタンが押された時
+            SerchFormClick: function(){
+                if(app.click){
+                    app.click = false;
+                    // レアリティを取得
+                    var rarity_list = [];
+                    for (var i = 0; i < document.forms['serch-form'].elements['rarity'].length; i++) {
+                        // i番目のチェックボックスがチェックされているかを判定
+                        if (document.forms['serch-form'].elements['rarity'][i].checked) {
+                            rarity_list.push(document.forms['serch-form'].elements['rarity'][i].value);
+                        }
+                    }
+                    app.rarity_list = rarity_list;   
+                    // グループを取得
+                    var group_list = [];
+                    for (var i = 0; i < document.forms['serch-form'].elements['group'].length; i++) {
+                        // i番目のチェックボックスがチェックされているかを判定
+                        if (document.forms['serch-form'].elements['group'][i].checked) {
+                            group_list.push(document.forms['serch-form'].elements['group'][i].value);
+                        }
+                    }
+                    app.group_list = group_list;
+
+                    app.Ajax();
+                }
+            },
+            // 並び替えボタンが押された時
+            OrderByClick: function(){
+                if(app.click){
+                    app.click = false;
+                    var order_by= $('#order').val();
+
+                    if (order_by == "cost"){
+                        app.order_by = "rarity";
+                        $('#order').text("レアリティ順");
+                    }
+                    else if (order_by == "rarity"){
+                        app.order_by = "cost";
+                        $('#order').text("コスト順");
+                    }
+                    app.Ajax();
+                }
+            },
+            // 昇順降順ボタンが押された時
+            AscDescClick: function(){
+                if(app.click){
+                    app.click = false;
+                    var value = $('#asc-desc').val();
+                    if(value == "ASCEND"){
+                        app.order_key = "DESCEND"
+                        $('#asc-desc').text("降順");
+                    } else {
+                        app.order_key = "ASCEND"
+                        $('#asc-desc').text("昇順");
+                    }
+                    app.Ajax();
+                }
+            },
+            // ajax処理
+            Ajax: function(){
+                $.ajax({
+                    method: 'POST',
+                    url: "{% url 'narrowing' %}",
+                    data: {
+                        'characters': JSON.stringify(app.characters),
+                        'actions': JSON.stringify(app.actions),
+                        'rarity': JSON.stringify(app.rarity_list),
+                        'group': JSON.stringify(app.group_list),
+                        'order_by': app.order_by,
+                        'order_key': app.order_key,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    dataType: 'json',
+                    success: function(response){
+                        app.characters = response.characters;
+                        app.actions = response.actions;
+
+                        app.click = true;
+                    }
+                })
+            },
+        },
+        mounted() {
+            // 並び替えテキストセット
+            if (this.order_by == "rarity"){
+                $('#order').text("レアリティ順");
+            }
+            else if (this.order_by == "cost"){
+                $('#order').text("コスト順");
+            }
+            // 降順昇順テキストセット
+            if(this.order_key == "DESCEND"){
+                $('#asc-desc').text("降順");
+            } else {
+                $('#asc-desc').text("昇順");
+            }
+        }
+    });
+</script>
+{% endblock %}

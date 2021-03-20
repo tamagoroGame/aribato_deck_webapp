@@ -1,0 +1,70 @@
+{% load static %}
+<html>
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-B3L6HYTS3Q"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-B3L6HYTS3Q');
+        </script>
+        <title>アリバトデッキ投稿サイト</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'css/deck.css' %}">
+        <link rel="stylesheet" href="{% static 'css/iziModal.min.css' %}">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/1.4.1/css/ionicons.min.css">
+        <script src="https://kit.fontawesome.com/d798c664a7.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue-cookies@1.7.3/vue-cookies.js"></script>
+    </head>
+    
+<body>
+    <div class="container-fluid">
+        <nav class="border navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#" style="color:rgb(98, 98, 98); font-weight: bold;">アリバト デッキ投稿サイト</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'card_list' %}">カードリスト</a> </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">ログアウト</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_login' %}">ログイン</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}">ユーザー登録</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
+        <div class="link_bar d-flex">
+            {% block link_bar %}
+            <div class="col-4 border p-1 align-items-center text-center bg-light">
+                <a class="nav-link" href="{% url 'deck_new' %}">デッキ作成</a>
+            </div>
+            <div class="col-4 border p-1 align-items-center text-center bg-light">
+                <a class="nav-link" href="{% url 'mypage' %}">マイページ</a>
+            </div>
+            <div class="col-4 border p-1 align-items-center text-center bg-light">
+                <a class="nav-link" href="{% url 'deck_list' %}">投稿デッキ</a>
+            </div>
+            {% endblock %}
+        </div>
+        
+        {% block content %}
+        {% endblock %}
+
+        <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="{% static 'js/iziModal.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        {% block js %}
+        {% endblock %}
+    </div>
+</body>
+</html>

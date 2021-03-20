@@ -1,0 +1,15 @@
+{% extends 'deck/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="row"><p class="col">{{ character.card_subname }}</p></div>
+    <div class="row"><p class="col">{{ character.card_name }}</p></div>
+    <div class="row" id="card_detail_image"><img src="/media/{{card.picture}}"　width="250px" height="275px" class="d-block mx-auto"></div>
+    <div class="row"><p class="col">{{ character.card_id }}</p></div>
+    <div class="row"><p class="col">{{ character.rarity }}</p></div>
+    <div class="row"><p class="col">{{ character.group }}</p></div>
+    <div class="row"><p class="col">{{ character.cost }}</p></div>
+    <div class="row"><p class="col">{{ character.attack }}</p></div>
+    <div class="row"><p class="col">{{ character.avility_text }}</p></div>
+    <div class="row"><p class="col">{{ character.combo_text }}</p></div>
+{% endblock %}

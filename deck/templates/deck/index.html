@@ -1,0 +1,41 @@
+{% extends 'deck/base.html' %}
+{% load static %}
+
+{% block content %}
+{{ image_url_list|json_script:"image_url_list" }}
+{{ id_url_list|json_script:"id_url_list" }}
+
+<!-- 検索フォーム -->
+<form id="serch-form" method="POST">
+    {% csrf_token %}
+    <div class="rarity">
+        【レアリティ】<br>
+        <label><input type="checkbox" name="rarity" value="SS">SS</label>
+        <label><input type="checkbox" name="rarity" value="S">S</label>
+        <label><input type="checkbox" name="rarity" value="A">A</label>
+        <label><input type="checkbox" name="rarity" value="B">B</label><br>
+    </div>
+    
+    <div class="group">
+        【グループ】<br>
+        <label id="zyuken"><input type="checkbox" name="group" value="zyuken">287期受験生</label>
+        <label id="ryodan"><input type="checkbox" name="group" value="ryodan">幻影旅団　</label>
+        <label id="mafian"><input type="checkbox" name="group" value="mafian">マフィアン</label>
+        <label id="gi"><input type="checkbox" name="group" value="gi">G.I</label><br>
+        <label id="kimera"><input type="checkbox" name="group" value="kimera">キメラアント</label>
+        <label id="toubatu"><input type="checkbox" name="group" value="toubatu">蟻と闘う者</label>
+        <label id="free"><input type="checkbox" name="group" value="free">フリー</label><br>
+    </div>
+    <input type="submit" id="serch" value="絞り込み">
+</form>
+
+<!-- ページナンバー -->
+<!-- <span id="prev">前のページ</span> ＜ <span id="page"></span> ＞ <span id="next">次のページ</span> -->
+<!-- カードリストテーブル -->
+<div id="card_list_table"></div>
+{% include "deck/pagination.html" %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/card_list_table.js' %}"></script>
+{% endblock %}

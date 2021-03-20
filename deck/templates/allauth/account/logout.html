@@ -1,0 +1,27 @@
+{% extends "deck/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'account_logout' %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  {% endif %}
+  <div class="row">
+    <div class="col-10 mx-auto mt-5">
+      <div id="logout_div" class="mt-5">
+        <p>ログアウトしますか？</p>
+        <button id="logout_button" type="submit" class="btn btn-gray border border-secondary bg-light text-center">
+          ログアウト
+        </button>
+        <p class="mt-5" style="color: rgb(224, 84, 84);">※デッキを作成するにはログインしている必要があります。</p>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+{% endblock %}

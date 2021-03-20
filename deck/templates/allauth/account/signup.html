@@ -1,0 +1,62 @@
+{% extends "deck/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-10 mx-auto mt-3">
+    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+
+      <div class="col-12">
+        <div id="username" class="col-12 mx-auto text-center">
+          <div class="mt-3 mb-1">
+            ユーザー名
+          </div>
+          {{form.username}}
+        </div>
+  
+        <div id="password1" class="col-12 mx-auto text-center">
+          <div class="mt-3 mb-1">
+            パスワード
+          </div>
+          {{form.password1}}
+        </div>
+  
+        <div id="password2" class="col-12 mx-auto text-center">
+          <div class="mt-3 mb-1">
+            パスワード（確認）
+          </div>
+          {{form.password2}}
+        </div>
+
+        {% if form.errors %}
+        <div id="error_messages" class="col-12 mx-auto text-center">
+          <div class="mt-3 mb-1">
+            ※エラー
+          </div>
+          {% for key, value in form.errors.items %}
+            <div class="col-12">
+              {{value}}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="my-4">
+        <button id="signup_button" class="btn btn-gray border border-secondary bg-light text-center" type="submit">
+          ユーザ登録
+        </button>
+      </div>
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+{% endblock %}

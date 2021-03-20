@@ -1,0 +1,57 @@
+{% extends "deck/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-10 mx-auto mt-3">
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <!-- {{ form.as_p }} -->
+      <div class="col-12">
+        <div id="username" class="col-12 mx-auto text-center">
+          <div class="mt-2 mb-1">
+            ユーザ名
+          </div>
+          {{ form.login }}
+        </div>
+      
+        <div id="password" class="col-12 text-center">
+          <div class="mt-2 mb-1">
+            パスワード
+          </div>
+          {{ form.password }}
+        </div>
+      </div>
+
+      <div class="my-3">
+        <button id="login_button" class="btn btn-gray border border-secondary bg-light text-center" type="submit">
+          ログイン
+        </button>
+      </div>
+
+      <div id="exstra_form" class="mt-4">
+        <div class="my-2">
+          <a href="{% url 'account_signup' %}">ユーザ登録</a>
+        </div>
+  
+        <div class="my-2">
+          <a class="button" href="{% url 'account_reset_password' %}">パスワードを忘れた場合</a>
+        </div>
+
+        <div class="my-2">
+          <p class="mt-5">※デッキを作成するにはログインが必要です。</p>
+        </div>
+      </div>
+
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      
+    </form>
+  </div>
+</div>
+
+{% endblock %}
